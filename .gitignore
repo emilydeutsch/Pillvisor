@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 
 .idea
+
+serviceAccountKey.json
 # C extensions
 *.so
 
