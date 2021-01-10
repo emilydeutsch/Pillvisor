@@ -11,20 +11,45 @@
         }
         .row {
             display: flex;
-            height: 100%;
+            height: 90%;
         }
 
         .column {
             flex: 50%;
             /**border-radius: 25px;**/
-            overflow:auto;
         }
         
-        #left {
+        #addAlarm {
+            background-color: #FFFFFF;
+            /**border-radius: 25px;**/
+            padding: 10px;
+            margin: 20px;
+            border: 2px solid #4CAF50;
+            width: 30%;
+            text-align: center;
+        }
 
+        #addAlarm:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #addAlarm:active {
+            transform: translateY(4px);
+        }
+
+        #left {
+            overflow:auto;
+            height: 70%;
         }
         #right {
-            background-color:#dadada;
+            background-color:#ffffff;
+            /**border-radius: 25px;**/
+            padding: 10px;
+            margin: 20px;
+            border: 1px solid #dadada;
+            height: 50%;
+            overflow:auto;
         }
 
         .alarm {
@@ -36,16 +61,28 @@
             
         }
 
+        .alarm:hover {
+            background-color:  #cecece;
+        }
+
+        .alarm:active {
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
     </style>
 </head>
 <body>
     <h1>Welcome!</h1>
     <div class="row" height = 100%>
-        <div class="column" id = "left">
+        <div class="column" id = "leftcontainer">
+            <div id = "left"></div>
+            <div id = "addAlarm" onclick= "newAlarmPressed()">
+                <h2 style="font-weight: normal">Add a new alarm</h2>
+            </div>
         </div>
-        <div class="column " id = "right" style="background-color:#faf8f7">
-            <p>some text on the right</p>
-            <p>{{userAlarms}}</p>
+        <div class="column " id = "right">
+            <p> Please select an alarm </p>
         </div>
     </div>
     
@@ -65,7 +102,8 @@
             console.log(String(name) + " " + String(hour) + ":" + String(minute) + " " + String(days));
         
             var newAlarm = document.createElement("div");
-            newAlarm.classList.add("alarm"); 
+            newAlarm.onclick = openAlarm(i);
+            newAlarm.classList.add("alarm");
 
             var alarmName = document.createElement("h1");
             alarmName.innerHTML = String(name);
@@ -104,6 +142,103 @@
 
             document.getElementById("left").appendChild(newAlarm);
 
+        }
+        
+
+        function openAlarm(i) {
+            return function(){ 
+
+                alarmDocument = document.getElementById("right");
+                alarmDocument.innerHTML = "";
+
+
+                currentAlarm = userAlarm[i];
+                name = currentAlarm.name;
+                hour = currentAlarm.hour
+                minute = currentAlarm.minute
+                days = currentAlarm.days
+
+                console.log(String(name) + " " + String(hour) + ":" + String(minute) + " " + String(days));
+
+                var alarmName = document.createElement("h1");
+                alarmName.innerHTML = String(name);
+                //alarmName.style.fontWeight = "normal";
+                alarmDocument.appendChild(alarmName);
+
+                var dayNames = "\n"
+
+                if (days[0] == 1) {
+                    dayNames += "Sunday \n"
+                }
+                if (days[1] == 1) {
+                    dayNames += "Monday \n"
+                }
+                if (days[2] == 1) {
+                    dayNames += "Tuesday \n"
+                }
+                if (days[3] == 1) {
+                    dayNames += "Wednesday \n"
+                }
+                if (days[4] == 1) {
+                    dayNames += "Thursday \n"
+                }
+                if (days[5] == 1) {
+                    dayNames += "Friday \n"
+                }
+                if (days[6] == 1) {
+                    dayNames += "Saturday \n"
+                }
+                    
+
+                var alarmTime = document.createElement("h2");
+                alarmTime.innerHTML = "Time: " + String(hour) + ":" + String(minute) + " on " + dayNames;
+                alarmTime.style.fontWeight = "normal";
+                alarmDocument.appendChild(alarmTime);
+
+            }
+        }
+        
+        function newAlarmPressed() {
+            alarmDocument = document.getElementById("right");
+            alarmDocument.innerHTML = "";
+
+
+            var alarmNameLabel = document.createElement("label");
+            alarmNameLabel.for = "pillName";
+            alarmNameLabel.innerHTML = "Name of the new pill: ";
+            alarmDocument.appendChild(alarmNameLabel);
+
+            var alarmName = document.createElement("input");
+            alarmName.type = "text"
+            alarmName.id = "pillName"
+            alarmDocument.appendChild(alarmName);
+            alarmDocument.appendChild(document.createElement("br"));
+            alarmDocument.appendChild(document.createElement("br"));
+
+            var alarmHourLabel = document.createElement("label");
+            alarmHourLabel.for = "pillHour";
+            alarmHourLabel.innerHTML = "The hour of the alarm: ";
+            alarmDocument.appendChild(alarmHourLabel);
+
+            var alarmHour = document.createElement("input");
+            alarmHour.type = "text"
+            alarmHour.id = "pillHour"
+            alarmDocument.appendChild(alarmHour);
+            alarmDocument.appendChild(document.createElement("br"));
+            alarmDocument.appendChild(document.createElement("br"));
+
+
+            var alarmMinuteLabel = document.createElement("label");
+            alarmMinuteLabel.for = "pillMinute";
+            alarmMinuteLabel.innerHTML = "The minute of the alarm: ";
+            alarmDocument.appendChild(alarmMinuteLabel);
+
+            var alarmMinute = document.createElement("input");
+            alarmMinute.type = "text"
+            alarmMinute.id = "pillMinute"
+            alarmDocument.appendChild(alarmMinute);
+            alarmDocument.appendChild(document.createElement("br"));
+            alarmDocument.appendChild(document.createElement("br"));
         }
 
     </script>
