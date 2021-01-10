@@ -1,5 +1,11 @@
 # Pillvisor
 
+## External Links
+
+Devpost submission can be found [here](https://devpost.com/software/pillvisor)
+
+The machine learning model file is too large to go on github so it can be downloaded [here](https://drive.google.com/file/d/1qQHHHWDjcuoMhbA4IO3vB0hAMtF27dce/view?usp=sharing)
+
 ## Inspiration
 
 Adults over the age of 50 take an average of 15 prescription medications annually. Keeping track of this is very challenging. 
