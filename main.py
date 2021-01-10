@@ -14,6 +14,17 @@ from gpiozero import LED, Button
 from picamera import PiCamera
 import RPi.GPIO as GPIO
 
+import tensorflow as tf
+
+from os import listdir
+from os.path import isfile, join
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+conv_model = tf.keras.models.load_model("hackathoncnn")
+
 def alarmActuated(name):
     """This in the main function that runs when an alarm occurs
 
@@ -114,7 +125,32 @@ def runPillRecognition():
         Returns: (string) name of the predicted pill or empty string if not recognised
     """
     #TODO: michelle this is you
-    return 'True'
+    #may need to change these names
+    pills = {0:"white pill",
+             1:"orange pill",
+             2:"yellow pill",
+             3:"multicolour pill"}
+
+    img = cv2.imread('testIm.jpg')
+
+    dim = (250,250)
+    resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA) 
+    cv2.imshow("resized",resized)
+    cv2.waitKey(3)
+    re_img = resized/255.0
+    img_aug = np.expand_dims(re_img, axis=0)
+    y_predict = conv_model.predict(img_aug)[0]
+    indices = [i for i, x in enumerate(y_predict) if x == max(y_predict)]
+
+    pred_val = indices[0]
+    if y_predict[pred_val] > 0.5:
+        pill_string = pills[pred_val]
+    else:
+        pill_string = ""
+
+
+
+    return pill_string
 
 def checkRecognition(cnnName,actualName):
     """Checks if the two inputted names are the same. If wrong it alerts the user and returns false
