@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>My Webpage</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            background-color:#faf8f7;
+            font-family: Arial;
+        }
+        .row {
+            display: flex;
+            height: 100%;
+        }
+
+        .column {
+            flex: 50%;
+            /**border-radius: 25px;**/
+            overflow:auto;
+        }
+        
+        #left {
+
+        }
+        #right {
+            background-color:#dadada;
+        }
+
+        .alarm {
+            background-color:#ffffff;
+            /**border-radius: 25px;**/
+            padding: 10px;
+            margin-left: 20px;
+            border: 1px solid #dadada;
+            
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Welcome!</h1>
+    <div class="row" height = 100%>
+        <div class="column" id = "left">
+        </div>
+        <div class="column " id = "right" style="background-color:#faf8f7">
+            <p>some text on the right</p>
+            <p>{{userAlarms}}</p>
+        </div>
+    </div>
+    
+
+
+    <script>
+        var userAlarm = {{userAlarms|safe}};
+
+        for (var i = 0; i < userAlarm.length; i++) {
+
+            currentAlarm = userAlarm[i];
+            name = currentAlarm.name;
+            hour = currentAlarm.hour
+            minute = currentAlarm.minute
+            days = currentAlarm.days
+
+            console.log(String(name) + " " + String(hour) + ":" + String(minute) + " " + String(days));
+        
+            var newAlarm = document.createElement("div");
+            newAlarm.classList.add("alarm"); 
+
+            var alarmName = document.createElement("h1");
+            alarmName.innerHTML = String(name);
+            //alarmName.style.fontWeight = "normal";
+            newAlarm.appendChild(alarmName);
+
+            var dayNames = ""
+
+            if (days[0] == 1) {
+                dayNames += "Sunday "
+            }
+            if (days[1] == 1) {
+                dayNames += "Monday "
+            }
+            if (days[2] == 1) {
+                dayNames += "Tuesday "
+            }
+            if (days[3] == 1) {
+                dayNames += "Wednesday "
+            }
+            if (days[4] == 1) {
+                dayNames += "Thursday "
+            }
+            if (days[5] == 1) {
+                dayNames += "Friday "
+            }
+            if (days[6] == 1) {
+                dayNames += "Saturday "
+            }
+                
+
+            var alarmTime = document.createElement("h2");
+            alarmTime.innerHTML = String(hour) + ":" + String(minute) + " on " + dayNames;
+            alarmTime.style.fontWeight = "normal";
+            newAlarm.appendChild(alarmTime);
+
+            document.getElementById("left").appendChild(newAlarm);
+
+        }
+
+    </script>
+
+</body>
+</html>
