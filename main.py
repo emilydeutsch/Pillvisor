@@ -234,15 +234,18 @@ def getFirebaseData(userID):
         userID (string): the id of the user
     """
     cred = credentials.Certificate("serviceAccountKey.json")
-    firebase_admin.initialize_app(cred)
+    a = firebase_admin.initialize_app(cred)
 
     ourDatabase = firestore.client()  
     collection = ourDatabase.collection('pillboxes')
     doc = collection.document(userID)
     userInfo = doc.get().to_dict()
     userAlarms = userInfo['alarms']
+
+    firebase_admin.delete_app(a)
     
-    return userAlarms    
+    return userAlarms   
+       
     
 def refresh(userID):
     """This syncs the pi with the alarms on the database
