@@ -22,7 +22,30 @@ def getFirebaseData(userID):
     return userAlarms 
 
 
+def writeFirebaseData(name, hour, minute, days):
+    cred = credentials.Certificate("serviceAccountKey.json")
+    a = firebase_admin.initialize_app(cred)
+
+    ourDatabase = firestore.client()  
+    collection = ourDatabase.collection('pillboxes')
+    doc = collection.document('1234')
+
+    doc.update({
+        'alarms': firestore.ArrayUnion([
+            {"name": str(name),
+            "hour": str(hour),
+            "minute": str(minute),
+            "days": days}
+
+        ])
+    })
+
+    firebase_admin.delete_app(a)
+
+
+
 app = Flask(__name__)
+
 @app.route('/')
 def index():
     return 'Please go to /profile/UserID'
@@ -35,11 +58,14 @@ def index():
 #def profile(username):
 #    return '{}\'s profile'.format(escape(username))
 
+
+
 @app.route('/profile/')
 @app.route('/profile/<userID>')
 def profile(userID=None):
+
     userAlarms = getFirebaseData(userID)
-    return render_template('flaskHTML.html', name=userAlarms, userAlarms = userAlarms)
+    return render_template('flaskHTML.html', userAlarms = userAlarms, writing = writeFirebaseData)
 
 
 if __name__ == "__main__":
