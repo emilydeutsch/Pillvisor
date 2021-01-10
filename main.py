@@ -5,6 +5,13 @@ import threading
 import firebase_admin
 from firebase_admin import credentials,firestore
 
+import board
+import digitalio
+import adafruit_character_lcd.character_lcd as characterlcd
+from spidev import SpiDev
+from time import sleep
+from gpiozero import LED, Button
+
 def alarmActuated(name):
     """This in the main function that runs when an alarm occurs
 
@@ -21,14 +28,13 @@ def alarmActuated(name):
     alarmFinish()
 
 
-
-
 def displayPillName(name):
     """displays the name on LCD
 
     Args:
         name (string): the name of the pill
     """
+    lcd.message = name
 
 def checkPillBox(name):
     """This function checks lights up the correct led for the day and rings buzzer. 
@@ -38,13 +44,58 @@ def checkPillBox(name):
     Args:
         name (string): name of pill
     """
-    #TODO: dana this is you
+    #constants
+    global DaysInWeek
+    DaysInWeek = 7
+    global TodayDay
+    TodayDay = 5 #hard coded the day in order of the days in the pill box (start at 0)
+
+    #Variables
+    DayValues=[0]*DaysInWeek
+    DayStatus=[0]*DaysInWeek
+    DayDesired = [0]*DaysInWeek
+    Correct = False
+
+    #Start of Code for checking open box with leds for correct day and error
+    DayDesired[TodayDay] = 1
+    DayLEDS[TodayDay].on()
+
+    while Correct is False:
+        daysSum = 0
+        
+        # Scanning all the day channels for their values and sum 
+        for i in range(DaysInWeek):
+            DayValues[i] = adc.read( channel = i) 
+            #print(DayNames[i] + ': ' + str(DayValues[i]))
+            daysSum = daysSum + DayValues[i]
+
+        # Determaining if the days are opened or closed
+        for i in range(DaysInWeek):
+            dayAve = (daysSum - DayValues[i])/(DaysInWeek -1)
+            # larger than allowed means bright and open
+            if DayValues[i] > dayAve + 100:
+                DayStatus[i] = 1
+            else:
+                DayStatus[i] = 0
+
+        print(DayStatus)
+        
+        #turning on error LED when incorrect
+        if DayStatus == DayDesired:
+            lError.off()
+            Correct = True
+        elif DayStatus == [0]*DaysInWeek:
+            lError.off()    
+        else :
+            lError.on()
+        
+        sleep(0.2)
 
 def captureImage():
     """This function waits for the button press and takes a jpg picture (250x250) with the pi 
         camera and saves it to location 
     """
-    waitForCameraButtonPress()
+    button.wait_for_press()
     #take picture
 
 def waitForCameraButtonPress():
@@ -59,6 +110,7 @@ def runPillRecognition():
         Returns: (string) name of the predicted pill or empty string if not recognised
     """
     #TODO: michelle this is you
+    return 'true'
 
 def checkRecognition(cnnName,actualName):
     """Checks if the two inputted names are the same. If wrong it alerts the user and returns false
@@ -70,9 +122,14 @@ def checkRecognition(cnnName,actualName):
 
     Returns: True if the names match and false if incorrect 
     """
+    return True
 def alarmFinish():
     """clears all outstanding LEDs and and LCD display
     """
+    for i in range(DaysInWeek):
+        DayLEDS[i].off()
+
+    lcd.clear() 
 
 def setup(userID):
     """This runs when the code runs for the first time. It loads the machine learning model
@@ -82,7 +139,35 @@ def setup(userID):
         userID (string): the id of the user
     """
     #load model TODO: michelle write command
-    refresh(userID)
+    #refresh(userID)
+
+    # LCD object
+    lcd_rs = digitalio.DigitalInOut(board.D5)
+    lcd_en = digitalio.DigitalInOut(board.D6)
+    lcd_d4 = digitalio.DigitalInOut(board.D12)
+    lcd_d5 = digitalio.DigitalInOut(board.D13)
+    lcd_d6 = digitalio.DigitalInOut(board.D19)
+    lcd_d7 = digitalio.DigitalInOut(board.D16)
+    lcd_columns = 16
+    lcd_rows = 2
+
+    global lcd = characterlcd.Character_LCD_Mono(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6,
+                                        lcd_d7, lcd_columns, lcd_rows)
+
+    #all LEDS
+    adc = MCP3008()
+    lSun = LED(24)
+    lMon = LED(23)
+    lTue = LED(22)
+    lWed = LED(27)
+    lThu = LED(18)
+    lFri = LED(17)
+    lSat = LED(4)
+    global DayLEDS = [lSun,lMon,lTue,lWed,lThu,lFri,lSat]
+    global lError = LED(26)
+    
+    #button for sync and for picture 
+    global button = Button(3)
 
 def getFirebaseData(userID):
     """
@@ -150,6 +235,25 @@ def refresh(userID):
         if (days[6] == 1):
             schedule.every().saturday.at(alarmTime).do(alarmActuated, pillName)
 
+class MCP3008:
+    def __init__(self, bus = 0, device = 0):
+        self.bus, self.device = bus, device
+        self.spi = SpiDev()
+        self.open()
+        self.spi.max_speed_hz = 1000000 # 1MHz
+ 
+    def open(self):
+        self.spi.open(self.bus, self.device)
+        self.spi.max_speed_hz = 1000000 # 1MHz
+    
+    def read(self, channel = 0):
+        adc = self.spi.xfer2([1, (8 + channel) << 4, 0])
+        data = ((adc[1] & 3) << 8) + adc[2]
+        return data
+            
+    def close(self):
+        self.spi.close()
+
 currentID = '1234'
 
 setup(currentID)
@@ -157,3 +261,5 @@ while True:
     schedule.run_pending()
     time.sleep(1)
     print(schedule.idle_seconds())
+
+
