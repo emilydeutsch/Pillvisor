@@ -1,4 +1,10 @@
-from time import sleep
+import schedule
+import time
+import threading
+
+import firebase_admin
+from firebase_admin import credentials,firestore
+
 def alarmActuated(name):
     """This in the main function that runs when an alarm occurs
 
@@ -68,20 +74,86 @@ def alarmFinish():
     """clears all outstanding LEDs and and LCD display
     """
 
-def setup():
+def setup(userID):
     """This runs when the code runs for the first time. It loads the machine learning model
     and reads and sets up the alarms from the database.
+    
+    Args:
+        userID (string): the id of the user
     """
     #load model TODO: michelle write command
-    refresh()
-    
-def refresh():
-    """This syncs the pi with the alarms on the database
+    refresh(userID)
+
+def getFirebaseData(userID):
     """
-    #TODO: eran write this
+    This gets the data from the Firebase database and converts it to a readable dictionary
+    
+    Args:
+        userID (string): the id of the user
+    """
+    cred = credentials.Certificate("serviceAccountKey.json")
+    firebase_admin.initialize_app(cred)
+
+    ourDatabase = firestore.client()  
+    collection = ourDatabase.collection('pillboxes')
+    doc = collection.document(userID)
+    userInfo = doc.get().to_dict()
+    userAlarms = userInfo['alarms']
+    
+    return userAlarms    
+    
+def refresh(userID):
+    """This syncs the pi with the alarms on the database
+    
+    Args:
+        userID (string): the id of the user
+    """
+    userAlarms = getFirebaseData(userID)
+
+    
+
+    for alarm in userAlarms:
+        #print(alarm['name']+ " " +str(alarm['hour']) + ":" + str(alarm['minute']) + str(alarm['days']))
+
+        pillName = alarm['name']
+        hour = alarm['hour']
+        minute = alarm['minute']
+        days = alarm['days']
 
 
-setup()
+        
+        if (int(hour) < 10):
+            if (int(minute) < 10):
+                alarmTime = "0" + str(hour) + ":0" + str(minute)
+            else:
+                alarmTime = "0" + str(hour) + ":" + str(minute)
+        else:
+            if (int(minute) < 10):
+                alarmTime = str(hour) + ":0" + str(minute)
+            else:
+                alarmTime = str(hour) + ":" + str(minute)
+        
+
+
+        if (days[0] == 1):
+            schedule.every().sunday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[1] == 1):
+            schedule.every().monday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[2] == 1):
+            schedule.every().tuesday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[3] == 1):
+            schedule.every().wednesday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[4] == 1):
+            schedule.every().thursday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[5] == 1):
+            schedule.every().friday.at(alarmTime).do(alarmActuated, pillName)
+        if (days[6] == 1):
+            schedule.every().saturday.at(alarmTime).do(alarmActuated, pillName)
+
+currentID = '1234'
+
+setup(currentID)
 while True:
-    #check alarm
-    sleep(1)
+    schedule.run_pending()
+    time.sleep(1)
+    print(schedule.idle_seconds())
