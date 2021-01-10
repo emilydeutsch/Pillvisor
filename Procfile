@@ -1,0 +1,1 @@
+web: gunicorn --chdir flaskWebsite flaskSite:app
