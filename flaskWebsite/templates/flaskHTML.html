@@ -73,7 +73,7 @@
     </style>
 </head>
 <body>
-    <h1>Welcome!</h1>
+    <h1>Welcome to Pillvisor!</h1>
     <div class="row" height = 100%>
         <div class="column" id = "leftcontainer">
             <div id = "left"></div>
@@ -195,9 +195,100 @@
                 alarmTime.style.fontWeight = "normal";
                 alarmDocument.appendChild(alarmTime);
 
+
+                alarmDocument.appendChild(document.createElement("br"));
+                alarmDocument.appendChild(document.createElement("br"));
+                alarmDocument.appendChild(document.createElement("br"));
+                alarmDocument.appendChild(document.createElement("br"));
+
+
+                var alarmForm = document.createElement("form");
+                alarmForm.method = "POST";
+                alarmDocument.appendChild(alarmForm);
+
+                var alarmHidden = document.createElement("input");
+                alarmHidden.type = "hidden";
+                alarmHidden.name = "hidden";
+                alarmHidden.value = i;
+                alarmForm.appendChild(alarmHidden);
+
+                var alarmSubmit = document.createElement("input");
+                alarmSubmit.type = "submit";
+                alarmSubmit.value = "Delete this alarm?"
+                alarmSubmit.style.backgroundColor =  "#fc7484";
+                alarmSubmit.style.height="50px";
+                alarmSubmit.style.width="200px";
+                alarmSubmit.style.textAlign = "center";
+                alarmForm.appendChild(alarmSubmit);
             }
         }
         
+
+
+
+        function newAlarmPressed() {
+            alarmDocument = document.getElementById("right");
+            alarmDocument.innerHTML = "";
+        
+            var alarmForm = document.createElement("form");
+            alarmForm.method = "POST";
+            alarmDocument.appendChild(alarmForm);
+
+
+            var alarmNameLabel = document.createElement("label");
+            alarmNameLabel.for = "pillName";
+            alarmNameLabel.innerHTML = "Name of the new pill: ";
+            alarmForm.appendChild(alarmNameLabel);
+
+            var alarmName = document.createElement("input");
+            alarmName.type = "text"
+            alarmName.name = "name";
+            alarmName.id = "pillName"
+            alarmForm.appendChild(alarmName);
+            alarmForm.appendChild(document.createElement("br"));
+            alarmForm.appendChild(document.createElement("br"));
+
+
+            var alarmHourLabel = document.createElement("label");
+            alarmHourLabel.for = "pillHour";
+            alarmHourLabel.innerHTML = "The hour of the alarm: ";
+            alarmForm.appendChild(alarmHourLabel);
+
+            var alarmHour = document.createElement("input");
+            alarmHour.type = "text"
+            alarmHour.name = "hour";
+            alarmHour.id = "pillHour"
+            alarmForm.appendChild(alarmHour);
+            alarmForm.appendChild(document.createElement("br"));
+            alarmForm.appendChild(document.createElement("br"));
+            
+
+            var alarmMinuteLabel = document.createElement("label");
+            alarmMinuteLabel.for = "pillMinute";
+            alarmMinuteLabel.innerHTML = "The minute of the alarm: ";
+            alarmForm.appendChild(alarmMinuteLabel);
+
+            var alarmMinute = document.createElement("input");
+            alarmMinute.type = "text";
+            alarmMinute.name = "minute";
+            alarmMinute.id = "pillMinute";
+            alarmForm.appendChild(alarmMinute);
+            alarmForm.appendChild(document.createElement("br"));
+            alarmForm.appendChild(document.createElement("br"));
+
+            var alarmHidden = document.createElement("input");
+            alarmHidden.type = "hidden";
+            alarmHidden.name = "hidden";
+            alarmHidden.value = "creating";
+            alarmForm.appendChild(alarmHidden);
+
+            var alarmSubmit = document.createElement("input");
+            alarmSubmit.type = "submit";
+            alarmForm.appendChild(alarmSubmit);
+        }
+
+
+        /*
         function newAlarmPressed() {
             alarmDocument = document.getElementById("right");
             alarmDocument.innerHTML = "";
@@ -258,12 +349,12 @@
                 console.log(String(name) + " " + String(hour) + ":" + String(minute))
                 
 
-                /*
+                
                 THE PART THAT NEEDS FIXING
                 TODO: Send the name, hour, and minute data to the writeFirebaseData function in the python
                 { { writing(name, hour, minute, [1,1,1,1,1,1,1]) }}
                 { { writeFirebaseData(name, hour, minute, [1,1,1,1,1,1,1]) }}
-                */
+                
 
 
                 alarmDocument = document.getElementById("right");
@@ -271,6 +362,8 @@
 
             }
         }
+
+        */
 
     </script>
 
