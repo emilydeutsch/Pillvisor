@@ -1,9 +1,10 @@
-#import schedule
+import schedule
 import time
 import threading
+import datetime
 
-#import firebase_admin
-#from firebase_admin import credentials,firestore
+import firebase_admin
+from firebase_admin import credentials,firestore
 
 import board
 import digitalio
@@ -14,7 +15,7 @@ from gpiozero import LED, Button
 from picamera import PiCamera
 import RPi.GPIO as GPIO
 
-import tensorflow as tf
+#import tensorflow as tf
 '''
 from os import listdir
 from os.path import isfile, join
@@ -50,7 +51,9 @@ def displayPillName(name):
         name (string): the name of the pill
     """
     lcd.message = name
-
+    pwm.start(1)
+    pwm.ChangeFrequency(300)
+    
 def checkPillBox(name):
     """This function checks lights up the correct led for the day and rings buzzer. 
         It checks that the correct day is open and alerts user if wrong. This function
@@ -62,7 +65,7 @@ def checkPillBox(name):
     #constants
     global DaysInWeek
     DaysInWeek = 7
-    TodayDay = 5 #hard coded the day in order of the days in the pill box (start at 0)
+    TodayDay = int(datetime.datetime.today().strftime('%w')) #hard coded the day in order of the days in the pill box (start at 0)
 
     #Variables
     DayValues=[0]*DaysInWeek
@@ -74,6 +77,7 @@ def checkPillBox(name):
     DayDesired[TodayDay] = 1
     lcd.cursor_position(0,1)
     lcd.message = 'Open Correct Day'
+    print('Open Correct Day')
     DayLEDS[TodayDay].on()
 
     while Correct is False:
@@ -102,7 +106,7 @@ def checkPillBox(name):
             Correct = True
         elif DayStatus == [0]*DaysInWeek:
             lError.off()
-            pwm.stop()
+            #pwm.stop()
         else :
             lError.on()
             pwm.start(1)
@@ -163,6 +167,7 @@ def checkRecognition(cnnName,actualName):
 
     Returns: True if the names match and false if incorrect 
     """
+    lcd.clear()
     lcd.message = 'Correct Pill'
     return True
 
