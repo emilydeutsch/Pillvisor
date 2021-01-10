@@ -15,8 +15,8 @@ from gpiozero import LED, Button
 from picamera import PiCamera
 import RPi.GPIO as GPIO
 
-#import tensorflow as tf
-'''
+import tensorflow as tf
+
 from os import listdir
 from os.path import isfile, join
 
@@ -25,7 +25,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 conv_model = tf.keras.models.load_model("hackathoncnn")
-'''
+
 def alarmActuated(name):
     """This in the main function that runs when an alarm occurs
 
@@ -37,8 +37,7 @@ def alarmActuated(name):
     correctPillScanned = False
     while correctPillScanned is False:
         captureImage()
-        #cnnName = runPillRecognition()
-        cnnName = name
+        cnnName = runPillRecognition()
         correctPillScanned = checkRecognition(cnnName,name)
     
     alarmFinish()
@@ -122,14 +121,13 @@ def captureImage():
     lcd.message = 'Press To Capture'
     button.wait_for_press()
     camera.capture('testIm.jpg')    
-'''
+
 def runPillRecognition():
     """This function runs a CNN that recognises the pill. It gets the latest image from a fixed
         path on the pi.
 
         Returns: (string) name of the predicted pill or empty string if not recognised
     """
-    #TODO: michelle this is you
     #may need to change these names
     pills = {0:"white pill",
              1:"orange pill",
@@ -156,7 +154,7 @@ def runPillRecognition():
 
 
     return pill_string
-'''
+
 def checkRecognition(cnnName,actualName):
     """Checks if the two inputted names are the same. If wrong it alerts the user and returns false
 
@@ -168,8 +166,12 @@ def checkRecognition(cnnName,actualName):
     Returns: True if the names match and false if incorrect 
     """
     lcd.clear()
-    lcd.message = 'Correct Pill'
-    return True
+    if cnnName == actualName:
+        lcd.message = 'Correct Pill'
+        return True
+    else:
+        lcd.message = 'Incorrect Pill'
+        return False
 
 def alarmFinish():
     """clears all outstanding LEDs and and LCD display
@@ -187,7 +189,7 @@ def setup(userID):
         userID (string): the id of the user
     """
     #load model 
-    #refresh(userID)
+    refresh(userID)
 
     # LCD object
     lcd_rs = digitalio.DigitalInOut(board.D5)
@@ -325,9 +327,9 @@ currentID = '1234'
 
 setup(currentID)
 while True:
-    alarmActuated("Motrin")
-    #schedule.run_pending()
-    sleep(10)
+    schedule.run_pending()
+    if button.is_pressed: 
+        refresh()
+    sleep(1)
     lcd.clear()
-    #print(schedule.idle_seconds())
 
