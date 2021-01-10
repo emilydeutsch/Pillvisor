@@ -78,7 +78,7 @@
         <div class="column" id = "leftcontainer">
             <div id = "left"></div>
             <div id = "addAlarm" onclick= "newAlarmPressed()">
-                <h2 style="font-weight: normal">Add a new alarm</h2>
+                <h2 style="font-weight: normal">Create a new alarm</h2>
             </div>
         </div>
         <div class="column " id = "right">
@@ -239,6 +239,37 @@
             alarmDocument.appendChild(alarmMinute);
             alarmDocument.appendChild(document.createElement("br"));
             alarmDocument.appendChild(document.createElement("br"));
+
+            var alarmButton = document.createElement("button");
+            alarmButton.id = "newAlarmButton"
+            alarmButton.onclick = addAlarm();
+            alarmButton.innerHTML = "Create new alarm"
+            alarmDocument.appendChild(alarmButton);
+            
+        }
+
+        function addAlarm() {
+            return function() {
+
+                name = document.getElementById("pillName").value;
+                hour = document.getElementById("pillHour").value;
+                minute = document.getElementById("pillHour").value;
+
+                console.log(String(name) + " " + String(hour) + ":" + String(minute))
+                
+
+                /*
+                THE PART THAT NEEDS FIXING
+                TODO: Send the name, hour, and minute data to the writeFirebaseData function in the python
+                { { writing(name, hour, minute, [1,1,1,1,1,1,1]) }}
+                { { writeFirebaseData(name, hour, minute, [1,1,1,1,1,1,1]) }}
+                */
+
+
+                alarmDocument = document.getElementById("right");
+                alarmDocument.innerHTML = "";
+
+            }
         }
 
     </script>
