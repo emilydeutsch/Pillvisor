@@ -34,6 +34,7 @@ DayDesired = [0]*DaysInWeek
 Correct = False
 
 #Objects
+#all LEDS
 adc = MCP3008()
 lSun = LED(24)
 lMon = LED(23)
@@ -43,7 +44,9 @@ lThu = LED(18)
 lFri = LED(17)
 lSat = LED(4)
 DayLEDS = [lSun,lMon,lTue,lWed,lThu,lFri,lSat]
+lError = LED(26)
 
+#Start of Code for checking open box with leds for correct day and error
 DayDesired[TodayDay] = 1
 DayLEDS[TodayDay].on()
 
@@ -67,14 +70,14 @@ while Correct is False:
 
     print(DayStatus)
     
-    for i in range(DaysInWeek):
-        if DayStatus[i] != DayDesired[i]:
-            break
-        if i == DaysInWeek-1:
-            Correct = True
-            DayLEDS[TodayDay].off()
-            
+    #turning on error LED when incorrect
+    if DayStatus == DayDesired:
+        lError.off()
+        Correct = True
+    elif DayStatus == [0]*DaysInWeek:
+        lError.off()    
+    else :
+        lError.on()
+     
     sleep(0.2)
     
-
-print('Correct')
