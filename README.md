@@ -4,6 +4,8 @@
 
 Devpost submission can be found [here](https://devpost.com/software/pillvisor)
 
+Youtube video can be found here: [![Pillvisor video](https://raw.githubusercontent.com/emilydeutsch/Pillvisor/main/logo.png)](https://www.youtube.com/watch?v=tJ-wAx5ln54&feature=emb_title)
+
 The machine learning model file is too large to go on github so it can be downloaded [here](https://drive.google.com/file/d/1qQHHHWDjcuoMhbA4IO3vB0hAMtF27dce/view?usp=sharing)
 
 ## Inspiration
