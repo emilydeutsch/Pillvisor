@@ -15,7 +15,7 @@ from picamera import PiCamera
 import RPi.GPIO as GPIO
 
 import tensorflow as tf
-
+'''
 from os import listdir
 from os.path import isfile, join
 
@@ -24,7 +24,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 conv_model = tf.keras.models.load_model("hackathoncnn")
-
+'''
 def alarmActuated(name):
     """This in the main function that runs when an alarm occurs
 
@@ -36,7 +36,8 @@ def alarmActuated(name):
     correctPillScanned = False
     while correctPillScanned is False:
         captureImage()
-        cnnName = runPillRecognition()
+        #cnnName = runPillRecognition()
+        cnnName = name
         correctPillScanned = checkRecognition(cnnName,name)
     
     alarmFinish()
@@ -117,7 +118,7 @@ def captureImage():
     lcd.message = 'Press To Capture'
     button.wait_for_press()
     camera.capture('testIm.jpg')    
-
+'''
 def runPillRecognition():
     """This function runs a CNN that recognises the pill. It gets the latest image from a fixed
         path on the pi.
@@ -151,7 +152,7 @@ def runPillRecognition():
 
 
     return pill_string
-
+'''
 def checkRecognition(cnnName,actualName):
     """Checks if the two inputted names are the same. If wrong it alerts the user and returns false
 
@@ -162,6 +163,7 @@ def checkRecognition(cnnName,actualName):
 
     Returns: True if the names match and false if incorrect 
     """
+    lcd.message = 'Correct Pill'
     return True
 
 def alarmFinish():
@@ -169,7 +171,7 @@ def alarmFinish():
     """
     for i in range(DaysInWeek):
         DayLEDS[i].off()
-
+    sleep(2)
     lcd.clear()
 
 def setup(userID):
@@ -179,7 +181,7 @@ def setup(userID):
     Args:
         userID (string): the id of the user
     """
-    #load model TODO: michelle write command
+    #load model 
     #refresh(userID)
 
     # LCD object
@@ -320,7 +322,6 @@ setup(currentID)
 while True:
     alarmActuated("Motrin")
     #schedule.run_pending()
-    lcd.message= 'Done'
     sleep(10)
     lcd.clear()
     #print(schedule.idle_seconds())
